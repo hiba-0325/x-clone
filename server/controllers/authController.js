@@ -55,7 +55,7 @@ const verifyRegister = async (req, res, next) => {
     userName,
     email,
     password: hashedPassword,
-    otp,
+    
   });
   await user.save();
 
@@ -63,17 +63,16 @@ const verifyRegister = async (req, res, next) => {
 };
 
 const userLogin = async (req, res, next) => {
-  console.log(req.body);
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email });
 
   if (!user) {
-    return next(new CustomError("Invalid credentials", 400));
+    return next(new CustomError("user is not found", 404));
   }
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
-    return next(new CustomError("invalid credentials", 400));
+    return next(new CustomError("incorrect password", 401));
   }
   const accessToken = jwt.sign({ id: user._id }, process.env.JWT_TOKEN, {
     expiresIn: "1d",
@@ -92,6 +91,7 @@ const userLogin = async (req, res, next) => {
     location: user.location,
     _id: user._id,
   };
+
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
@@ -101,10 +101,9 @@ const userLogin = async (req, res, next) => {
     .status(200)
     .json({ message: "successfully logged in", userDetail, accessToken });
 };
-
-const userLogout = async (req, res) => {
+const userLogout = async (req, res,) => {
   res.clearCookie("refreshToken");
-  res.status(200).json({ message: "successfully logged out " });
+  res.status(200).json({ message: "logged out successfully" });
 };
 
 const refreshingToken = async (req, res, next) => {
@@ -130,6 +129,9 @@ const refreshingToken = async (req, res, next) => {
     expiresIn: "1d",
   });
   res.status(200).json({ message: "Token refreshed", accessToken });
+  
 };
+
+
 
 export { sendOtp, verifyRegister, userLogin, userLogout, refreshingToken };
