@@ -7,4 +7,11 @@ import joi from "joi";
     password: joi.string().required(),
     otp: joi.string().required()
 });
-export default joiUserSchema
+
+const joiTweet = joi.object({
+    user:joi.string().required(),
+    text:joi.string().required(),
+   
+    
+})
+export default {joiUserSchema,joiTweet}
