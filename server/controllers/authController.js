@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import otpGen from "../utils/otpGenerator.js";
 import transporter from "../config/nodemailer.js";
-import joiUserSchema from "../models/joiSchema.js";
+import { joiUserSchema } from "../models/joiSchema.js";
 
 const sendOtp = async (req, res, next) => {
   const { email, userName } = req.body;
@@ -55,7 +55,6 @@ const verifyRegister = async (req, res, next) => {
     userName,
     email,
     password: hashedPassword,
-    
   });
   await user.save();
 
@@ -83,12 +82,14 @@ const userLogin = async (req, res, next) => {
     { expiresIn: "3d" }
   );
   const userDetail = {
-    fullname: user.name,
+    name: user.name,
     username: user.userName,
     profile: user.pfp,
     header: user.header,
     bio: user.bio,
+    web: user.web,
     location: user.location,
+   
     _id: user._id,
   };
 
@@ -101,7 +102,7 @@ const userLogin = async (req, res, next) => {
     .status(200)
     .json({ message: "successfully logged in", userDetail, accessToken });
 };
-const userLogout = async (req, res,) => {
+const userLogout = async (req, res) => {
   res.clearCookie("refreshToken");
   res.status(200).json({ message: "logged out successfully" });
 };
@@ -129,9 +130,6 @@ const refreshingToken = async (req, res, next) => {
     expiresIn: "1d",
   });
   res.status(200).json({ message: "Token refreshed", accessToken });
-  
 };
-
-
 
 export { sendOtp, verifyRegister, userLogin, userLogout, refreshingToken };
