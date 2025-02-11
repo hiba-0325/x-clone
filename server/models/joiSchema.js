@@ -14,4 +14,4 @@ const joiTweet = joi.object({
    
     
 })
-export default {joiUserSchema,joiTweet}
+export { joiUserSchema, joiTweet };
