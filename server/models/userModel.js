@@ -21,8 +21,8 @@ const userSchema = new Schema(
     web: { type: String },
     location: { type: String },
     dob: { type: String, required: false },
-    likedTweets: { type: [Schema.Types.ObjectId], ref: 'Tweet', default: [] },
-    savedTweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
+    likedTweets: { type: [Schema.Types.ObjectId], ref: 'Tweet' },
+    savedTweets: [{ type: Schema.Types.ObjectId, ref: "Tweet" }],
   },
   { timestamps: true }
 );
