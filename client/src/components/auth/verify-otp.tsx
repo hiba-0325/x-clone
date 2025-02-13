@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/utils/axios";
+import axiosInstance, { axiosErrorCatch } from "@/utils/axios";
 import Image from "next/image";
 
 const VerifyOtp = () => {
@@ -36,8 +36,8 @@ const VerifyOtp = () => {
         localStorage.removeItem("registration");
         router.push("/login"); // Navigate to login page after success
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "OTP verification failed");
+    } catch (err) {
+      setError(axiosErrorCatch(err));
     }
   };
 

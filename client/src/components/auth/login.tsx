@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useState } from "react";
-import axiosInstance from "@/utils/axios";
+import axiosInstance, { axiosErrorCatch } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -26,8 +26,8 @@ const LoginForm = () => {
       } else {
         setError("Invalid login credentials");
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed");
+    } catch (err) {
+      setError(axiosErrorCatch(err));
     }
   };
 

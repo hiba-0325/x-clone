@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "@/utils/axios";
+import axiosInstance, { axiosErrorCatch } from "@/utils/axios";
 import Cookies from "js-cookie";
 
 interface AuthState {
-  user: any;
+  user: string|null;
   loading: boolean;
   error: string | null;
 }
@@ -23,8 +23,8 @@ export const registerUser = createAsyncThunk(
       const response = await axiosInstance.post("/auth/register", { name,userName, email, password });
       Cookies.set("user", JSON.stringify(response.data), { expires: 7 }); // Store user in cookies
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data.message || "Registration failed");
+    } catch (error) {
+      return rejectWithValue(axiosErrorCatch(error));
     }
   }
 );
@@ -37,8 +37,8 @@ export const loginUser = createAsyncThunk(
       const response = await axiosInstance.post("/auth/login", { email, password });
       Cookies.set("user", JSON.stringify(response.data), { expires: 7 }); // Store user in cookies
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data.message || "Login failed");
+    } catch (error) {
+      return rejectWithValue(axiosErrorCatch(error));
     }
   }
 );

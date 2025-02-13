@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/utils/axios";
+import axiosInstance, { axiosErrorCatch } from "@/utils/axios";
 import Image from "next/image";
 
 const RegisterForm = () => {
@@ -47,9 +47,9 @@ const RegisterForm = () => {
       );
       alert("OTP sent to your email. Please verify!");
       router.push("/verify-otp");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Full error:", err);
-      setError("Registration failed. Please try again.");
+      setError(axiosErrorCatch(err));
     }
   };
 
