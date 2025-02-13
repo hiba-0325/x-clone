@@ -6,6 +6,7 @@ import authRoute from "./routes/authRoutes.js";
 import userRoute from "./routes/userRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 import notifRoute from "./routes/notifRoutes.js";
+import errorHandler from "./middlewares/globalErrorHandler.js";
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,8 @@ app.use("/notifications", notifRoute);
 app.all("*", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
+
+app.use(errorHandler)
 
 const port = process.env.PORT || 3005;
 app.listen(port, () => {
