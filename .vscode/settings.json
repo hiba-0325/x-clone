@@ -1,6 +1,0 @@
-{
-  "explorer.excludeGitIgnore": false,
-  "files.exclude": {
-    "**/.vscode": true
-  }
-}
