@@ -20,12 +20,9 @@ const LoginForm = () => {
         password,
       });
 
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token); // Save token
-        router.push("/home"); // Redirect to home
-      } else {
-        setError("Invalid login credentials");
-      }
+      localStorage.setItem("token", res.data.accessToken); // Save token
+      router.push("/home"); // Redirect to home
+  
     } catch (err) {
       setError(axiosErrorCatch(err));
     }
