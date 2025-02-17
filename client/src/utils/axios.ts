@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 export const axiosInstance = axios.create({
     baseURL: "http://localhost:3008",
     headers: {
-        "Content-Type": "application/json",
+     "Content-Type": "multipart/form-data"
         
     },
     withCredentials:true,
