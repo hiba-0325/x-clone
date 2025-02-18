@@ -23,7 +23,7 @@ const VerifyOtp = () => {
       setPassword(JSON.parse(registrationData).password)
 
     } else {
-      router.push("/register"); // Redirect if no email is found
+      router.push("/register"); 
     }
   }, [router]);
 
@@ -34,12 +34,12 @@ const VerifyOtp = () => {
       if (res.data.success) {
         alert("OTP Verified! Registration successful.");
         localStorage.removeItem("registration");
-        router.push("/login"); // Navigate to login page after success
+        router.push("/login");
       }
     } catch (err) {
       setError(axiosErrorCatch(err));
     }
-  };
+  }; 
 
   return (
     <div className="flex justify-center items-center h-screen bg-black text-white">
