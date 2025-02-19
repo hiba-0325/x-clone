@@ -5,6 +5,20 @@ import CustomError from "../../utils/customError.js";
 import  tryCatch  from "../../utils/tryCatch.js";
 
  
+
+
+const getAllUsers = async (req, res) => {
+  const users = await User.find();
+
+  if (!users || users.length < 1) {
+    throw new CustomError("users not found", 404);
+  }
+
+  res
+    .status(200)
+    .json({message:"successfully fetched users", users});
+};
+
 const updateUserPfp = async (req, res, next) => {
   if(!req.file){
     return next(new CustomError("Please upload a file",400))
@@ -114,4 +128,4 @@ const updateProfile = async (req, res, next) => {
     }
 };
 
-export{updateProfile,updateUserPfp,removeUserPfp,updateUserHeader,removeUserHeader}
+export{getAllUsers ,updateProfile,updateUserPfp,removeUserPfp,updateUserHeader,removeUserHeader}
