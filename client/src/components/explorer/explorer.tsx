@@ -1,173 +1,161 @@
 "use client";
-
+import useDebounce from "@/lib/useDebounce";
+import { useAppSelector } from "@/lib/store/hook";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
-const dummyTweets = [
-  {
-    id: 1,
-    user: {
-      name: "John Doe",
-      userName: "johndoe",
-      pfp: "/default-avatar.png",
-    },
-    text: "This is a sample tweet for the explorer page!",
-    createdAt: "2023-10-01T12:34:56Z",
-    likes: 12,
-    comments: 3,
-    reposts: 5,
-  },
-  {
-    id: 2,
-    user: {
-      name: "Jane Smith",
-      userName: "janesmith",
-      pfp: "/default-avatar.png",
-    },
-    text: "Another random tweet to fill up space.",
-    createdAt: "2023-10-01T10:20:45Z",
-    likes: 45,
-    comments: 10,
-    reposts: 8,
-  },
-];
+type ActiveTab = "forYou" | "trending" | "news" | "sports" | "entertainment";
 
-const dummyTrends = [
-  { name: "ReactJS", tweets: "12.3k" },
-  { name: "Next.js", tweets: "9.8k" },
-  { name: "Web Development", tweets: "7.6k" },
-];
+const Explore: React.FC = () => {
+  const { users } = useAppSelector((state) => state.chat);
+  const [activeTab, setActiveTab] = useState<ActiveTab>("forYou");
+  const [query, setQuery] = useState<string>(""); 
+  const router = useRouter();
+  
+  useDebounce({ query });
+  const handleNavigation = (userName: string) => {
+    router.push(`/${userName}`);
+  };
 
-const dummyUsers = [
-  {
-    id: 1,
-    name: "Alice Johnson",
-    userName: "alicej",
-    pfp: "/default-avatar.png",
-  },
-  {
-    id: 2,
-    name: "Bob Williams",
-    userName: "bobbyw",
-    pfp: "/default-avatar.png",
-  },
-];
-
-export default function ExplorerPage() {
   return (
-    <div className="bg-black text-white min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 p-4">
-        <h2 className="text-xl font-bold mb-4">Trends</h2>
-        <ul>
-          {dummyTrends.map((trend) => (
-            <li key={trend.name} className="mb-2">
-              <p className="font-bold">{trend.name}</p>
-              <p className="text-gray-500">{trend.tweets} Tweets</p>
-            </li>
-          ))}
-        </ul>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 overflow-y-auto">
-        <h1 className="text-2xl font-bold mb-4">Explorer</h1>
-
-        {/* Tweets */}
-        <div className="space-y-4">
-          {dummyTweets.map((tweet) => (
-            <div key={tweet.id} className="p-4 border-b border-gray-700">
-              <div className="flex gap-3">
-                {/* Profile Picture */}
-                <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                  <Image
-                    src={tweet.user.pfp}
-                    alt={`${tweet.user.userName}'s profile`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover"
-                  />
-                </div>
-
-                {/* Tweet Content */}
-                <div className="flex-1">
-                  {/* User Info */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-bold">{tweet.user.name}</span>
-                    <span className="text-gray-500 text-sm">
-                      @{tweet.user.userName} ·{" "}
-                      {new Date(tweet.createdAt).toLocaleString()}
-                    </span>
-                  </div>
-
-                  {/* Tweet Text */}
-                  <p className="text-white mb-4">{tweet.text}</p>
-
-                  {/* Interaction Buttons */}
-                  <div className="flex gap-8 text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                      >
-                        <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-2-8h4v4h-4v-4z" />
-                      </svg>
-                      <span>{tweet.comments}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                      >
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8c0-1.1.9-2 2-2h6l2-2h4a2 2 0 0 1 2 2v6zm-5-6v6h4v-6h-4zm0 8v6h4v-6h-4z" />
-                      </svg>
-                      <span>{tweet.reposts}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="w-5 h-5"
-                      >
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                      </svg>
-                      <span>{tweet.likes}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+    <div className="min-h-screen bg-black text-white flex">
+      <div className="w-full px-6 py-4">
+        <div>
+          <div>
+            <svg
+              className="absolute top-4 pl-3 w-9 h-10 text-gray-400"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M21 21l-4.35-4.35M10 4a6 6 0 100 12 6 6 0 000-12z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search"
+              value={query} // Bind query state to input
+              onChange={(e) => setQuery(e.target.value)} // Update query state
+              className="w-full bg-slate-700 text-gray-300 py-2 px-12 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-      </main>
+        <header className="border-b border-gray-700 pb-4 pt-7 mb-6 max-w-full hide-scrollbar overflow-x-auto text-nowrap">
+          <nav className="flex justify-between space-x-4 mt-2">
+            {["forYou", "trending", "news", "sports", "entertainment"].map(
+              (tab) => (
+                <div
+                  key={tab}
+                  className={`relative text-gray-400 font-medium cursor-pointer ${
+                    activeTab === tab ? "text-white" : "text-gray-400"
+                  }`}
+                  onClick={() => setActiveTab(tab as ActiveTab)}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  {activeTab === tab && (
+                    <div className="absolute left-0 right-0 h-1 bg-blue-500 rounded-t-md top-9"></div>
+                  )}
+                </div>
+              )
+            )}
+          </nav>
+        </header>
+        {!users || users.length < 1 ? (
+          <div></div>
+        ) : (
+          <div className="hide-scrollbar overflow-y-auto h-[80vh]">
+            {users.map((user) => (
+              <div
+                key={user._id}
+                className="border-b py-3 cursor-pointer border-gray-600"
+                onClick={() => handleNavigation(user.userName)}
+              >
+                <div>
+                  <div className="flex gap-4">
+                    <div>
+                      {user?.pfp && (
+                        <Image
+                          src={user?.pfp}
+                          alt="profile"
+                          width={50}
+                          height={50}
+                          className="rounded-full"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-bold text-xl">
+                        {user?.name ? user.name : "Messages"}
+                      </div>
+                      <Link
+                        href={`/${user?.userName}`}
+                        className="text-gray-500 cursor-pointer hover:underline"
+                      >
+                        {user?.userName ? "@" + user.userName : ""}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Right Sidebar */}
-      <aside className="w-64 bg-gray-900 p-4">
-        <h2 className="text-xl font-bold mb-4">Who to Follow</h2>
-        <ul>
-          {dummyUsers.map((user) => (
-            <li key={user.id} className="flex items-center gap-3 mb-4">
-              <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                <Image
-                  src={user.pfp}
-                  alt={`${user.userName}'s profile`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <p className="font-bold">{user.name}</p>
-                <p className="text-gray-500">@{user.userName}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <aside className="w-1/2 px-6 py-4 border-l border-gray-700 hidden md:block">
+        <h2 className="text-xl font-bold mb-4">Who to follow</h2>
+
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gray-600 rounded-full"></div>
+            <div className="ml-3">
+              <p className="font-medium">Tovino Thomas</p>
+              <p className="text-sm text-gray-400">@ttovino</p>
+            </div>
+          </div>
+          <button className="bg-white text-black px-4 py-1 rounded-lg text-sm">
+            Following
+          </button>
+        </div>
+
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gray-600 rounded-full"></div>
+            <div className="ml-3">
+              <p className="font-medium">Aju Varghese</p>
+              <p className="text-sm text-gray-400">@AjuVarghese</p>
+            </div>
+          </div>
+          <button className="bg-white text-black px-4 py-1 rounded-lg text-sm">
+            Following
+          </button>
+        </div>
+
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 bg-gray-600 rounded-full"></div>
+            <div className="ml-3">
+              <p className="font-medium">SportsCenter</p>
+              <p className="text-sm text-gray-400">@SportsCenter</p>
+            </div>
+          </div>
+          <button className="bg-blue-500 text-white px-4 py-1 rounded-lg text-sm">
+            Follow
+          </button>
+        </div>
+
+        <a href="#" className="text-blue-500 text-sm">
+          Show more
+        </a>
       </aside>
     </div>
   );
-}
+};
+
+export default Explore;
