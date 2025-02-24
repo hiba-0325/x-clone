@@ -119,6 +119,7 @@ const updateProfile = async (req, res, next) => {
         if (web) updates.web = web;
         if (location) updates.location = location;
         if(dob) updates.dob=dob;
+        
        
 
         const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });

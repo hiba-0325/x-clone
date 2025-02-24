@@ -131,6 +131,7 @@ const Sidebar: React.FC = () => {
   </div>
 </div>
 
+
      
       {showLogoutPopup && (
         <div className="absolute bottom-20 right-5 bg-black border border-gray-700 rounded-lg shadow-lg p-4 w-56">

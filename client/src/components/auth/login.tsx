@@ -5,6 +5,7 @@ import { useState } from "react";
 import axiosInstance, { axiosErrorCatch } from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -19,10 +20,22 @@ const LoginForm = () => {
         email,
         password,
       });
-
-      localStorage.setItem("token", res.data.accessToken); // Save token
-      router.push("/home"); // Redirect to home
   
+      const user = {
+        token: res.data.accessToken,
+        id: res.data.userId, // If needed
+      };
+  
+      // ✅ Store in Cookies (Expires in 7 days)
+      Cookies.set("user", JSON.stringify(user), { expires: 7 });
+  
+      // ✅ Also store in localStorage (if needed)
+      localStorage.setItem("token", res.data.accessToken); 
+  
+      console.log("✅ Token stored in Cookies & localStorage:", Cookies.get("user"));
+  
+      // Redirect to home
+      router.push("/home"); 
     } catch (err) {
       setError(axiosErrorCatch(err));
     }

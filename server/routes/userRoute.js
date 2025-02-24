@@ -3,11 +3,12 @@ import tryCatch from "../utils/tryCatch.js";
 import verifyToken from "../middlewares/auth.js";
 import upload from "../config/multer.js";
 import {
-  updateProfile,
+  getAllUsers,
   updateUserPfp,
   removeUserPfp,
   updateUserHeader,
   removeUserHeader,
+  updateProfile,
 } from "../controllers/user/userDetailController.js";
 import { uploadToCloudinary } from "../middlewares/uploadFile.js";
 import {
@@ -20,20 +21,31 @@ import {
   repostTweet,
   deleteTweet,
   commentOnTweet,
+  fetchUserComments,
+  fetchFollowingUserPost,
+  fetchUserTweets,
 } from "../controllers/user/tweetController.js";
 
+import {
+  getOneUser,
+  userProfilePic,
+  getUsersByUsername,
+} from "../controllers/user/userQueryController.js";
 
-
-import {followUser, removeFollower, getFollowerList, getFollowingList, getFollowCount, getFollowStatus} from "../controllers/user/followController.js"
-
-
+import {
+  followUser,
+  removeFollower,
+  getFollowerList,
+  getFollowingList,
+  getFollowCount,
+  getFollowStatus,
+} from "../controllers/user/followController.js";
 
 const router = express.Router();
 router
 
-
   //profile
-
+  .get("/fetchAllUsers", verifyToken, getAllUsers)
   .post(
     "/update/pfp",
     verifyToken,
@@ -51,8 +63,9 @@ router
     tryCatch(updateUserHeader)
   )
   .delete("/remove/header", verifyToken, tryCatch(removeUserHeader))
+  .post("/update/profile" ,verifyToken ,tryCatch(updateProfile))
 
-  .post("/update/profile", verifyToken, tryCatch(updateProfile))
+  .get("/profile_pic/:username", tryCatch(userProfilePic))
 
   //tweet
   .get("/tweets", getAllTweets)
@@ -63,20 +76,26 @@ router
     uploadToCloudinary,
     createTweet
   )
-  .delete("/tweets/:id/delete", verifyToken, deleteTweet)
-  .post("/tweets/:id/like", verifyToken, likeTweet)
-  .get("/tweets/liked", verifyToken, getLikedTweets)
-  .post("/tweets/:id/save", verifyToken, saveTweet)
-  .get("/tweets/saved", verifyToken, getSavedTweets)
-  .post("/tweets/:id/repost", verifyToken, repostTweet)
-  .post("/tweets/:id/comment", verifyToken, commentOnTweet)
 
+  
+  .delete("/tweets/delete/:id", verifyToken, deleteTweet)
+  .post("/tweets/like/:id", verifyToken, likeTweet)
+  .get("/tweets/liked", verifyToken, getLikedTweets)
+  .post("/tweets/save/:id", verifyToken, saveTweet)
+  .get("/tweets/saved", verifyToken, getSavedTweets)
+  .post("/tweets/repost/:id", verifyToken, repostTweet)
+  .post("/tweets/comment/:id", verifyToken, commentOnTweet)
+  .get("/tweets/fetchUserComments", verifyToken, tryCatch(fetchUserComments))
+.get("/tweets/:userId", verifyToken, tryCatch(fetchUserTweets))
   //follow
-  .post('/follow/:id', verifyToken,tryCatch(followUser))
-  .delete('/remove/:id',verifyToken, tryCatch(removeFollower))
-  .get('/followers/:id', verifyToken, tryCatch(getFollowerList))
-.get('/following/:id',verifyToken, tryCatch(getFollowingList))
-.get('/follow-count/:id', verifyToken, tryCatch(getFollowCount))
-.get('/follow-status/:id', verifyToken, tryCatch(getFollowStatus))
+  .post("/follow/:id", verifyToken, tryCatch(followUser))
+  .delete("/remove/:id", verifyToken, tryCatch(removeFollower))
+  .get("/followers/:id", verifyToken, tryCatch(getFollowerList))
+  .get("/following/:id", verifyToken, tryCatch(getFollowingList))
+  .get("/follow-count/:id", verifyToken, tryCatch(getFollowCount))
+  .get("/follow-status/:id", verifyToken, tryCatch(getFollowStatus))
+
+//user
+.get("/tweets/following", verifyToken, tryCatch(fetchFollowingUserPost));
 
 export default router;

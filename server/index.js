@@ -9,6 +9,7 @@ import notifRoute from "./routes/notifRoutes.js";
 import errorHandler from "./middlewares/globalErrorHandler.js";
 
 const app = express();
+
 dotenv.config();
 
 connectDB();

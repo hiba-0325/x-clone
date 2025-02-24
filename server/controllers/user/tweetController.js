@@ -5,6 +5,7 @@ import Saved from "../../models/savedModel.js";
 import CustomError from "../../utils/customError.js";
 import { userSocketMap } from "../../socket.js";
 import Notification from "../../models/notificationModel.js";
+import Follow from "../../models/followSchema.js";
 
 const createTweet = async (req, res, next) => {
   try {
@@ -268,6 +269,7 @@ const repostTweet = async (req, res, next) => {
 };
 
 // Comment on a tweet
+// Comment on a tweet
 const commentOnTweet = async (req, res, next) => {
   try {
     const tweetId = req.params.id;
@@ -318,6 +320,83 @@ const commentOnTweet = async (req, res, next) => {
   }
 };
 
+
+const fetchUserComments = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const comments = await Comment.find({ user: userId })
+      .populate("user", "userName pfp") 
+      .populate({
+        path: "tweet",
+        populate: {
+          path: "user",
+          select: "userName pfp", 
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ comments });
+  } catch (error) {
+    console.error("Error fetching user comments:", error);
+    next(new CustomError("Error retrieving user comments", 500));
+  }
+};
+
+
+
+const fetchFollowingUserPost = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+   
+    const followingUsers = await Follow.find({ follower: userId }).select("following");
+
+    if (!followingUsers.length) {
+      return res.status(200).json({ tweets: [] });
+    }
+
+ 
+    const followingUserIds = followingUsers.map((follow) => follow.following);
+
+
+    const tweets = await Tweet.find({ user: { $in: followingUserIds } })
+      .populate("user", "userName pfp")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ tweets });
+  } catch (error) {
+    console.error("Error fetching following users' tweets:", error);
+    next(new CustomError("Error retrieving tweets", 500));
+  }
+};
+
+
+const fetchUserTweets = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    console.log("Fetching tweets for userId:", userId);
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const tweets = await Tweet.find({ userId }).sort({ createdAt: -1 });
+
+    console.log("Fetched tweets:", tweets);
+
+    if (!tweets.length) {
+      return res.status(404).json({ message: "No tweets found for this user" });
+    }
+
+    res.status(200).json(tweets);
+  } catch (error) {
+    console.error("Error fetching user tweets:", error);
+    next(new CustomError("Error retrieving user tweets", 500));
+  }
+};
+
 export {
   createTweet,
   deleteTweet,
@@ -328,4 +407,7 @@ export {
   getSavedTweets,
   repostTweet,
   commentOnTweet,
+  fetchUserComments,
+  fetchUserTweets,
+  fetchFollowingUserPost
 };
