@@ -1,18 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Notification {
-  _id: string;
-  type: string;
-  sender: {
-    _id: string;
-    fullname: string;
-    username: string;
-    profile: string;
-  };
-  read: boolean;
-  media: string;
-  createdAt: string;
-}
+import { Notification } from '@/utils/types/types';
 
 interface NotificationState {
   notifications: Notification[];
@@ -57,7 +45,7 @@ const notificationSlice = createSlice({
       state.messageUnreadCount = action.payload;
     },
     addMessageNotification: (state, action: PayloadAction<Notification>) => {
-      if(state.messageNotifications.find(notif => notif.sender.username === action.payload.sender.username)) return
+      if(state.messageNotifications.find(notif => notif.sender.name === action.payload.sender.name)) return
       state.messageNotifications.unshift(action.payload);
       state.messageUnreadCount += 1;
   }
