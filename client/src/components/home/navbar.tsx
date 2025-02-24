@@ -9,8 +9,7 @@ const NavBar: React.FC = () => {
   const { activeTab } = useAppSelector((state) => state.tweets);
 
   useEffect(() => {
-    const status =
-      JSON.parse(localStorage.getItem("status") || "forYou");
+    const status = localStorage.getItem("status") || "forYou";
     dispatch(setActiveTab(status));
   }, [activeTab, dispatch]);
 
@@ -40,7 +39,6 @@ const NavBar: React.FC = () => {
             localStorage.setItem("status", JSON.stringify("following"));
           }}
         >
-          Following
           {activeTab === "following" && (
             <div className="absolute left-0 right-0 h-1 bg-blue-500 rounded-t-md top-9"></div>
           )}
