@@ -1,53 +1,32 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useEffect, useState } from "react";
-import { getAllTweets } from "@/lib/store/thunks/tweet-thunks";
-import Header from "./navbar";
-import TweetForm from "./tweets/tweetForm";
-import TweetCard from "./tweets/tweetCard";
 
-export default function HomePage() {
-  // State to hold tweets
-  const [tweets, setTweets] = useState<any[]>([]);
+import React from "react";
+import NavBar from "@/components/home/navbar";
+import SearchSection from "@/components/home/search-section/search-section";
+import TweetList from "@/components/home/tweets/tweet-list";
+import PostInput from "@/components/home/tweets/tweetForm";
 
-  useEffect(() => {
-    const fetchTweets = async () => {
-      try {
-        const data = await getAllTweets();
 
-        // Sort tweets by createdAt in descending order (newest first)
-        const sortedTweets = data.sort(
-          
-          (a: any, b: any) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
 
-        setTweets(sortedTweets);
-      } catch (error) {
-        console.error("Error fetching tweets:", error);
-      }
-    };
 
-    fetchTweets();
-  }, []);
+export default function Home() {
+  
 
+  
   return (
-    <div className="bg-black text-white min-h-screen">
-      {/* Header */}
-      <Header />
-
-      {/* Main Content */}
-      <main className="flex flex-col p-4 space-y-4">
-        {/* Tweet Form */}
-        <TweetForm />
-
-        {/* Tweet Feed */}
-        <div className="space-y-4">
-          {tweets.map((tweet) => (
-            <TweetCard key={tweet._id} tweet={tweet} />
-          ))}
+    <div className="w-screen h-screen flex">
+      <div className="  sm:w-1/2 border-r border-gray-600 sticky">
+        <div className="">
+          <NavBar />
         </div>
-      </main>
+        <div className="hide-scrollbar overflow-y-scroll w-full sm:w-full max-h-[91vh]">
+          <PostInput />
+          <TweetList />
+        </div>
+      </div>
+      <div className="hidden md:block sm:w-1/4">
+        <SearchSection />
+      </div>
     </div>
   );
 }
