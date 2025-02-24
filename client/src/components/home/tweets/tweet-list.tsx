@@ -31,7 +31,7 @@ const TweetList: React.FC = () => {
   const fetchTweets = async (): Promise<TweetData[]> => {
     const res = await axiosInstance.get("api/user/tweets");
     if (res.data) {
-      return res.data.data;
+      return res.data;
     } else {
       throw new Error("Failed to fetch tweets");
     }
@@ -43,13 +43,21 @@ const TweetList: React.FC = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchFollowingUserPost());
+    if (isStatus !== "forYou") {
+      dispatch(fetchFollowingUserPost());
+    }
   }, [activeTab, dispatch]);
+
+  useEffect(() => {
+    console.log(data)
+  }, [data, isLoading]);
 
   const posts = isStatus === "forYou" ? data : followingTweets;
 
   if (error) {
-    return <div>{error}</div>;
+    if(isStatus !== "forYou"){
+      return <div>{error}</div>;
+    }
   }
 
   return (
@@ -59,7 +67,7 @@ const TweetList: React.FC = () => {
           <CircularProgress size={60} />
         </div>
       ) : (
-        posts?.map((tweet, index) => <Tweet key={index} {...tweet} />)
+        posts?.tweets?.map((tweet, index) => <Tweet key={index} {...tweet} />)
       )}
     </div>
   );
