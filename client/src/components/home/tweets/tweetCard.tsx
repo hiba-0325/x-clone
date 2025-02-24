@@ -83,7 +83,7 @@ export default function TweetById() {
           </div>
         </div>
         <div>
-          {tweet?.comments.map((comment) => (
+          {tweet?.comments?.map((comment) => (
             <Tweet key={comment._id} {...comment} />
           ))}
         </div>

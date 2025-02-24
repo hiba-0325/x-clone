@@ -5,7 +5,7 @@ import { TweetData } from "@/utils/types/types";
 
 // Create Tweet
 export const createTweet = createAsyncThunk(
-  "tweets/createTweet",
+  "api/user/tweets/create",
   async (formData: FormData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("api/user/tweets/create", formData, {
@@ -22,7 +22,7 @@ export const createTweet = createAsyncThunk(
 
 // Fetch Tweets
 export const fetchTweets = createAsyncThunk<TweetData[]>(
-  "tweets/fetchTweets",
+  "api/user/tweets/tweets",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get("api/user/tweets");
