@@ -8,11 +8,7 @@ export const createTweet = createAsyncThunk(
   "api/user/tweets/create",
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("api/user/tweets/create", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axiosInstance.post("api/user/tweets/create", formData);
       return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to create tweet");
@@ -125,6 +121,7 @@ export const commentOnTweet = async (tweetId: string, content: string) => {
 export const deleteTweet = async (tweetId: string) => {
   return axiosInstance.delete(`api/user/tweets/delete/${tweetId}`);
 };
+
 
 
 
